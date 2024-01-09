@@ -1,0 +1,34 @@
+### VisualStudioCode
+.vscode/*
+
+# Local History for Visual Studio Code
+.history/
+
+### JetBrains
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
+# Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
+.idea/
+
+
+### Linux
+# .nfs files are created when an open file is removed but is still being accessed
+.nfs*
+
+### macOS
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+### SublimeText
+# Cache files for Sublime Text
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+
+# Workspace files are user-specific
+*.sublime-workspace
+
+# Project files should be checked into the repository, unless a significant
+# proportion of contributors will probably not be using Sublime Text
+# *.sublime-project
