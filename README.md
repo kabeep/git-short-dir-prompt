@@ -49,7 +49,7 @@ It aims to enhance work efficiency and focus in the command line, especially sui
 git clone https://github.com/kabeep/git-short-dir-prompt.git
 ```
 
-2. Edit .bash_profile to call during initialization
+2. Edit `.bash_profile` to call during initialization
 
 ```shell
 vim ~/.bash_profile
@@ -78,7 +78,7 @@ then
   COMPLETION_PATH="${COMPLETION_PATH%/lib/git-core}"
   COMPLETION_PATH="$COMPLETION_PATH/share/git/completion"
 
-  ################### Change $COMPLETION_PATH to your path ####################
+  ####### Change $COMPLETION_PATH/git-short-dir-prompt.sh to your path ########
   # Check if repo-prompt.sh exists and source it if it does
   if test -f "$COMPLETION_PATH/git-short-dir-prompt.sh"
   then
@@ -109,7 +109,7 @@ test -f ~/.profile && . ~/.profile  # Source the .profile file if it exists
 test -f ~/.bashrc && . ~/.bashrc    # Source the .bashrc file if it exists
 ```
 
-3. Load .bash_profile / Restart Terminal
+3. Load `.bash_profile` or Restart Terminal
 
 ```shell
 source ~/.bash_profile
@@ -121,8 +121,8 @@ Once installed and configured, when you enter a Git repository directory, the co
 
 ## 🤝 Contribution
 
-Contributions via Pull Requests or Issues are welcome.
+Contributions via Pull Requests or [Issues](https://github.com/kabeep/git-short-dir-prompt/issues) are welcome.
 
 ## 📄 License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
