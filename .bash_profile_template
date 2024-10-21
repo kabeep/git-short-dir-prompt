@@ -1,3 +1,5 @@
+# .bash_profile
+
 # rewrite prompt string 1 content
 PS1='\[\033]0;$TITLEPREFIX:$PWD\007\]'  # Set terminal window title to include PWD (Present Working Directory)
 PS1="$PS1"'\n'                          # Add a new line to the prompt
@@ -5,27 +7,44 @@ PS1="$PS1"'\[\033[32m\]'                # Change text color to green
 PS1="$PS1"'username'                    # username
 PS1="$PS1"'\[\033[35m\]'                # Change text color to purple
 PS1="$PS1"'@hostname '                  # hostname
-PS1="$PS1"'\[\033[33m\]'                # Change text color to brownish yellow
+PS1="$PS1"' \[\033[33m\]'               # Change text color to brownish yellow
+
+# Initialize cache variable
+GIT_SHORT_DIR_PROMPT_CACHE=""
+
+# Function to reset the cache when changing directories
+reset_git_repo_cache() {
+  GIT_SHORT_DIR_PROMPT_CACHE=""
+}
+
+# Override the cd command to include cache reset
+cd() {
+  command cd "$@"
+  reset_git_repo_cache  # Reset cache after changing directory
+}
 
 # Check if WINELOADERNOEXEC is not set, if not, proceed to configure Git related prompts
-if test -z "$WINELOADERNOEXEC"
-then
-    # Determine the path for Git completions
-    GIT_EXEC_PATH="$(git --exec-path 2>/dev/null)"
-    COMPLETION_PATH="${GIT_EXEC_PATH%/libexec/git-core}"
-    COMPLETION_PATH="${COMPLETION_PATH%/lib/git-core}"
-    COMPLETION_PATH="$COMPLETION_PATH/share/git/completion"
+if test -z "$WINELOADERNOEXEC"; then
+	# Determine the path for Git completions
+	GIT_EXEC_PATH="$(git --exec-path 2>/dev/null)"
+	COMPLETION_PATH="${GIT_EXEC_PATH%/libexec/git-core}"
+	COMPLETION_PATH="${COMPLETION_PATH%/lib/git-core}"
+	COMPLETION_PATH="$COMPLETION_PATH/share/git/completion"
 
-    # Check if git-short-dir-prompt.sh exists and source it if it does
-    if test -f "$COMPLETION_PATH/git-short-dir-prompt.sh"
-    then
-        . "$COMPLETION_PATH/git-short-dir-prompt.sh"
-        PS1="$PS1"'`__git_short_dir_ps1`'  # Add the output from __git_short_dir_ps1 function to PS1
+	# Check if repo-prompt.sh exists and source it if it does
+    if test -z "$GIT_SHORT_DIR_PROMPT_CACHE"; then
+        if test -f "$COMPLETION_PATH/git-short-dir-prompt.sh"; then
+            . "$COMPLETION_PATH/git-short-dir-prompt.sh"
+            GIT_SHORT_DIR_PROMPT_CACHE='`__git_short_dir_ps1`'  # Add the output from __repo_ps1 function to PS1
+        else
+            GIT_SHORT_DIR_PROMPT_CACHE='\w'  # Fallback to current working directory if WINELOADERNOEXEC is set
+        fi
     fi
 
-    # Check if git-prompt.sh exists and source it if it does
-    if test -f "$COMPLETION_PATH/git-prompt.sh"
-    then
+    PS1="$PS1$GIT_SHORT_DIR_PROMPT_CACHE"
+
+	# Check if git-prompt.sh exists and source it if it does
+    if test -f "$COMPLETION_PATH/git-prompt.sh"; then
         . "$COMPLETION_PATH/git-completion.bash"
         . "$COMPLETION_PATH/git-prompt.sh"
         PS1="$PS1"'\[\033[36m\]'  # Change text color to cyan

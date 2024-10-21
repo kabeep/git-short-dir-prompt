@@ -1,17 +1,17 @@
-# repo_prompt.sh
+# git-short-dir-prompt.sh
 #
 # Copyright (C) 2024 张子鑫
 # Distributed under the MIT General Public License.
 #
 # This script helps you shorten the git working directory to a shorter path in your prompt.
 
-# Function to check if the current directory is within a Git repository
+# Check if the current directory is within a Git repository
 # Uses `git rev-parse --is-inside-work-tree` to determine if inside a Git repo.
 __is_in_git_repo() {
   git rev-parse --is-inside-work-tree &>/dev/null
 }
 
-# Function to get the root directory of the Git repository and extract its basename
+# Get the root directory of the Git repository and cache the result
 # Retrieves the top-level directory of the Git repository using `git rev-parse --show-toplevel`.
 # Converts the path to Unix format if on a Cygwin environment.
 __git_repo_root() {
@@ -26,32 +26,25 @@ __git_repo_root() {
   fi
 }
 
-# Function to get GitHub username from Git configuration
-# Fetches the global Git user name, falls back to "default_username" if not set.
+# Get GitHub username from Git configuration and cache the result
+# Fetches the global Git user name, falls back to "anonymous" if not set.
 __get_git_username() {
-  local github_username=$(git config --global user.name)
-  if [ -n "$github_username" ]; then
-    echo "$github_username"
-  else
-    echo "default_username" # Default username if not configured
-  fi
+  git config --global user.name || echo "anonymous"
 }
 
-# Function to customize the prompt for Git repositories
+# Customize the prompt for Git repositories
 # Builds a custom prompt showing the GitHub username, repository name, and relative path within the repo.
 __git_short_dir_ps1() {
   # Get the current working directory
+  local current_dir=$(pwd)
   if [ "$OS" = "Windows_NT" ]; then
-    local current_dir=$(pwd | tr '[:upper:]' '[:lower:]')
-  else
-    local current_dir=$(pwd)
+    current_dir=$(pwd | tr '[:upper:]' '[:lower:]')
   fi
 
   if __is_in_git_repo; then
     # Define the root directory of your target git repository
     local repo_root=$(__git_repo_root) # Modify this path accordingly
 
-    # Get the username from git config --global
     local git_username=$(__get_git_username)
 
     # Extract the relative path from the repo root
@@ -59,14 +52,14 @@ __git_short_dir_ps1() {
 
     # Check if at the root of the repo
     if [[ -z "$relative_path" ]]; then
-      relative_path="" # Indicates being at the root of the repo
+      relative_path="" # At the root of the repo
     fi
 
     # Print the customized prompt part
     # Format: "github:[username]/[repo_name][relative_path] "
     printf "github:${git_username}/$(basename "$repo_root")${relative_path}"
   else
-    # Outside the target repo, return standard working directory
-    printf $current_dir
+    # Outside a git repo, print the current directory safely
+    printf "%s" "$current_dir"
   fi
 }
